@@ -461,6 +461,60 @@ html[data-theme="powerlevel10k"] .terminal-panel[data-terminal-theme="dark"] {
   --terminal-scrollbar: 168, 168, 168;
 }
 
+/* Windows Terminal One Half Dark. ANSI values match the official scheme;
+   secondary UI surfaces and text preserve contrast around that palette. */
+html[data-theme="one-half-dark"],
+[data-theme="one-half-dark"] {
+  color-scheme: dark;
+  --bg: #282c34;
+  --bg-panel: #23272e;
+  --bg-hover: #303640;
+  --bg-selected: #343a44;
+  --border: #4b5260;
+  --text: #dcdfe4;
+  --text-muted: #b6bdc8;
+  --text-dim: #abb2bf;
+  --accent: #61afef;
+  --accent-hover: #82c1f4;
+  --accent-contrast: #282c34;
+  --user-bg: #23272e;
+  --assistant-bg: #282c34;
+  --tool-bg: #23272e;
+  --bg-subtle: rgba(255,255,255,0.04);
+  --ansi-black: #282c34;
+  --ansi-red: #e06c75;
+  --ansi-green: #98c379;
+  --ansi-yellow: #e5c07b;
+  --ansi-blue: #61afef;
+  --ansi-magenta: #c678dd;
+  --ansi-cyan: #56b6c2;
+  --ansi-white: #dcdfe4;
+  --ansi-bright-black: #5a6374;
+  --ansi-bright-red: #e06c75;
+  --ansi-bright-green: #98c379;
+  --ansi-bright-yellow: #e5c07b;
+  --ansi-bright-blue: #61afef;
+  --ansi-bright-magenta: #c678dd;
+  --ansi-bright-cyan: #56b6c2;
+  --ansi-bright-white: #dcdfe4;
+}
+
+html[data-theme="one-half-dark"] .terminal-panel[data-terminal-theme="dark"] {
+  --terminal-bg: #282c34;
+  --terminal-header-bg: #23272e;
+  --terminal-border: #4b5260;
+  --terminal-button-border: #4b5260;
+  --terminal-hover-bg: #303640;
+  --terminal-muted: #b6bdc8;
+  --terminal-strong: #dcdfe4;
+  --terminal-key: #dcdfe4;
+  --terminal-accent: #61afef;
+  --terminal-error-border: #e06c75;
+  --terminal-error-bg: #3b282e;
+  --terminal-error-text: #e06c75;
+  --terminal-scrollbar: 171, 178, 191;
+}
+
 .ansi-black-fg { color: var(--ansi-black); }
 .ansi-red-fg { color: var(--ansi-red); }
 .ansi-green-fg { color: var(--ansi-green); }

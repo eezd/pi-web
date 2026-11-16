@@ -8,7 +8,7 @@ import { DARK_THEMES, THEME_OPTIONS } from "../lib/theme.ts";
 const base = process.env.E2E_BASE_URL || "http://127.0.0.1:30141";
 const artifacts = fileURLToPath(new URL("../test-results/themes/", import.meta.url));
 const themes = THEME_OPTIONS.map(({ id }) => id);
-const labels = ["System", "Light", "Mist", "Lilac", "Sand", "Rose", "Dark", "Pine", "Dusk", "Ember", "Slate", "High contrast light", "High contrast dark", "Zenburn", "Powerlevel10k"];
+const labels = ["System", "Light", "Mist", "Lilac", "Sand", "Rose", "Dark", "Pine", "Dusk", "Ember", "Slate", "High contrast light", "High contrast dark", "Zenburn", "Powerlevel10k", "One Half Dark"];
 await mkdir(artifacts, { recursive: true });
 const browser = await chromium.launch();
 
@@ -99,15 +99,15 @@ try {
     await page.getByText("No sessions found", { exact: true }).waitFor({ state: "attached" });
     // Appearance lives in Settings now; the old toolbar theme menu was removed.
     await openSettings();
-    const powerlevel = page.getByRole("radio", { name: "Powerlevel10k", exact: true });
-    await powerlevel.focus();
-    await powerlevel.press("Space");
-    await expectTheme("powerlevel10k");
+    const oneHalf = page.getByRole("radio", { name: "One Half Dark", exact: true });
+    await oneHalf.focus();
+    await oneHalf.press("Space");
+    await expectTheme("one-half-dark");
     await page.keyboard.press("Escape");
     await page.getByRole("dialog", { name: "Settings", exact: true }).waitFor({ state: "detached" });
-    await expectTheme("powerlevel10k");
+    await expectTheme("one-half-dark");
     await openSettings();
-    assert.equal(await powerlevel.isChecked(), true);
+    assert.equal(await oneHalf.isChecked(), true);
     if (width === 1440) {
       await page.emulateMedia({ reducedMotion: "no-preference" });
       await page.getByRole("radio", { name: "Dark", exact: true }).locator("..").click();

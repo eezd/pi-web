@@ -250,7 +250,7 @@ function GeneralSettings({ sessionId, onSessionReloaded, quoteSelectionEnabled, 
                 className="settings-theme-option"
                 data-system={option.id === "auto" || undefined}
                 data-wide={option.id === "contrast-light" || option.id === "contrast-dark" || option.id === "zenburn" || undefined}
-                data-full={option.id === "powerlevel10k" || undefined}
+                data-full={option.id === "powerlevel10k" || option.id === "one-half-dark" || undefined}
               >
                 <input
                   type="radio"

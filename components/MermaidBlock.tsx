@@ -7,7 +7,7 @@ import SyntaxHighlighter from "react-syntax-highlighter/dist/esm/prism-light";
 import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { useTheme } from "@/hooks/useTheme";
-import { powerlevel10kSyntaxTheme } from "@/lib/powerlevel10k.mjs";
+import { getCustomSyntaxTheme } from "@/lib/syntax-themes.mjs";
 import { useI18n } from "@/hooks/useI18n";
 import { usePrismLanguages } from "@/hooks/usePrismLanguages";
 import { copyText } from "@/lib/clipboard";
@@ -467,7 +467,7 @@ export const CodeBlock = memo(function CodeBlock({ code, lang, headerAction, isS
       ) : (
         <SyntaxHighlighter
           language={highlighted ? lang || "text" : "text"}
-          style={theme === "powerlevel10k" ? powerlevel10kSyntaxTheme : isDark ? codeBlockDarkTheme : vs}
+          style={getCustomSyntaxTheme(theme) ?? (isDark ? codeBlockDarkTheme : vs)}
           showLineNumbers
           lineNumberStyle={{ color: "var(--text-dim)", fontStyle: "normal", flexShrink: 0 }}
           renderer={renderCodeLines}

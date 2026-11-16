@@ -49,6 +49,7 @@ export const enLocale: LocalePlugin = {
     "settings.themeContrastDark": "High contrast dark",
     "settings.themeZenburn": "Zenburn",
     "settings.themePowerlevel10k": "Powerlevel10k",
+    "settings.themeOneHalfDark": "One Half Dark",
     "settings.themeSystem": "System",
     "settings.thinkingExpandedDefault": "Expand thinking blocks by default",
     "settings.chat": "Chat",

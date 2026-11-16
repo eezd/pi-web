@@ -31,6 +31,41 @@ export async function checkCodeBackground(page) {
         ));
       });
     }
+    const selectTheme = async (name) => {
+      const sidebar = page.getByRole("button", { name: "Show sidebar", exact: true });
+      const settings = page.getByRole("button", { name: "Settings", exact: true });
+      if (page.viewportSize().width <= 640) await Promise.any([sidebar.waitFor(), settings.waitFor()]);
+      if (await sidebar.isVisible()) await sidebar.click();
+      await settings.click();
+      if (page.viewportSize().width <= 640) {
+        await page.locator(".settings-phone-home").getByRole("button", { name: "General", exact: true }).click();
+      } else {
+        await page.locator(".settings-section-tabs").getByRole("button", { name: "General", exact: true }).click();
+      }
+      await page.getByRole("radio", { name, exact: true }).locator("..").click();
+      await page.keyboard.press("Escape");
+      await page.getByRole("dialog", { name: "Settings", exact: true }).waitFor({ state: "detached" });
+    };
+    for (const [name, theme, keyword] of [
+      ["Powerlevel10k", "powerlevel10k", "rgb(175, 135, 255)"],
+      ["One Half Dark", "one-half-dark", "rgb(198, 120, 221)"],
+      ["Light", "light", null],
+      ["One Half Dark", "one-half-dark", "rgb(198, 120, 221)"],
+    ]) {
+      await selectTheme(name);
+      await page.waitForFunction((value) => document.documentElement.dataset.theme === value, theme);
+      if (keyword) {
+        await page.waitForFunction((color) => {
+          const token = [...document.querySelectorAll(".markdown-code-block .token")].find((node) => node.textContent === "const");
+          return token && getComputedStyle(token).color === color;
+        }, keyword);
+      }
+      await page.waitForFunction(() => [...document.querySelectorAll(".markdown-code-block pre")].every((pre) => (
+        getComputedStyle(pre).borderTopWidth === "0px"
+        && getComputedStyle(pre.querySelector("code")).backgroundColor === "rgba(0, 0, 0, 0)"
+      )));
+    }
+    await selectTheme("System");
     assert.deepEqual(warnings, [], "Theme switches must not mix background shorthand and backgroundColor");
   } finally {
     page.off("console", onConsole);

@@ -49,6 +49,7 @@ export const zhCNLocale: LocalePlugin = {
     "settings.themeContrastDark": "高对比深色",
     "settings.themeZenburn": "Zenburn",
     "settings.themePowerlevel10k": "Powerlevel10k",
+    "settings.themeOneHalfDark": "One Half Dark",
     "settings.themeSystem": "跟随系统",
     "settings.thinkingExpandedDefault": "默认展开思考块",
     "settings.chat": "对话",

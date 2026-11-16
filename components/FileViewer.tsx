@@ -8,7 +8,8 @@ import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import ReactMarkdown from "react-markdown";
 import { useTheme } from "@/hooks/useTheme";
-import { powerlevel10kSyntaxTheme } from "@/lib/powerlevel10k.mjs";
+import { getCustomSyntaxTheme } from "@/lib/syntax-themes.mjs";
+import type { ResolvedTheme } from "@/lib/theme";
 import { usePrismLanguages } from "@/hooks/usePrismLanguages";
 import {
   DOCX_PREVIEW_MAX_BYTES,
@@ -364,14 +365,14 @@ const DiffLineCode = memo(function DiffLineCode({
   language,
   prismReady,
   isDark,
-  powerlevel10k,
+  theme,
   wrapLines,
 }: {
   text: string;
   language: string;
   prismReady: boolean;
   isDark: boolean;
-  powerlevel10k: boolean;
+  theme: ResolvedTheme;
   wrapLines: boolean;
 }) {
   if (!prismReady || language === "text" || !text) {
@@ -380,7 +381,7 @@ const DiffLineCode = memo(function DiffLineCode({
   return (
     <SyntaxHighlighter
       language={language}
-      style={powerlevel10k ? powerlevel10kSyntaxTheme : isDark ? fileViewerDarkTheme : vs}
+      style={getCustomSyntaxTheme(theme) ?? (isDark ? fileViewerDarkTheme : vs)}
       showLineNumbers={false}
       wrapLongLines={wrapLines}
       PreTag="span"
@@ -416,14 +417,14 @@ function DiffView({
   language = "text",
   prismReady = false,
   isDark = false,
-  powerlevel10k = false,
+  theme = "light",
 }: {
   patch: string;
   wrapLines: boolean;
   language?: string;
   prismReady?: boolean;
   isDark?: boolean;
-  powerlevel10k?: boolean;
+  theme?: ResolvedTheme;
 }) {
   const { t } = useI18n();
   const diff = diffLines(patch);
@@ -571,7 +572,7 @@ function DiffView({
                       language={language}
                       prismReady={prismReady}
                       isDark={isDark}
-                      powerlevel10k={powerlevel10k}
+                      theme={theme}
                       wrapLines={wrapLines}
                     />
                   )
@@ -1668,7 +1669,7 @@ function TextFileViewer({
       <SyntaxHighlighter
         className={wrapLines ? "file-source-view is-wrapped" : "file-source-view"}
         language={language === "text" || !prismReady ? "plaintext" : language}
-        style={theme === "powerlevel10k" ? powerlevel10kSyntaxTheme : isDark ? fileViewerDarkTheme : vs}
+        style={getCustomSyntaxTheme(theme) ?? (isDark ? fileViewerDarkTheme : vs)}
         showLineNumbers
         lineNumberStyle={{
           ...FILE_PINNED_LINE_NUMBER_STYLE,
@@ -1998,7 +1999,7 @@ function TextFileViewer({
             language={language}
             prismReady={prismReady}
             isDark={isDark}
-            powerlevel10k={theme === "powerlevel10k"}
+            theme={theme}
           />
         ) : isHtml && effectiveDisplayMode === "preview" && data?.truncated && !htmlFull?.text ? (
           <div style={{ padding: 24, color: "var(--text-dim)", fontSize: 12 }}>
