@@ -7,28 +7,20 @@ const fs = require("fs");
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require("path");
 
-const NPM_LATEST_URL = "https://registry.npmjs.org/@agegr%2Fpi-web/latest";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { gt, valid } = require("semver");
+
+const NPM_LATEST_URL = "https://registry.npmjs.org/@eezd%2Fpi-web/latest";
 const FETCH_TIMEOUT_MS = 10_000;
-const MANUAL_COMMAND = "npm install -g @agegr/pi-web@latest";
+const MANUAL_COMMAND = "npm install -g @eezd/pi-web@latest";
 
 // Port of lib/app-update.ts (bin cannot import TypeScript).
-function parseStableVersion(version) {
-  const match = /^(\d+)\.(\d+)\.(\d+)$/.exec(version);
-  if (!match) return null;
-  const parts = match.slice(1).map(Number);
-  return parts.every(Number.isSafeInteger) ? parts : null;
+function isReleaseVersion(version) {
+  return /^\d+\.\d+\.\d+(?:-custom\.[1-9]\d*)?$/.test(version) && valid(version) !== null;
 }
 
 function isNewerStableVersion(candidate, current) {
-  const candidateParts = parseStableVersion(candidate);
-  const currentParts = parseStableVersion(current);
-  if (!candidateParts || !currentParts) return false;
-  for (let index = 0; index < candidateParts.length; index += 1) {
-    if (candidateParts[index] !== currentParts[index]) {
-      return candidateParts[index] > currentParts[index];
-    }
-  }
-  return false;
+  return isReleaseVersion(candidate) && isReleaseVersion(current) && gt(candidate, current);
 }
 
 async function fetchLatestVersion() {
@@ -38,7 +30,7 @@ async function fetchLatestVersion() {
   });
   if (!response.ok) throw new Error(`npm registry returned HTTP ${response.status}`);
   const { version } = await response.json();
-  if (typeof version !== "string" || !parseStableVersion(version)) {
+  if (typeof version !== "string" || !isReleaseVersion(version)) {
     throw new Error("npm registry returned an invalid version");
   }
   return version;
@@ -64,14 +56,14 @@ function realpathOrSelf(target, realpath = fs.realpathSync) {
   }
 }
 
-// "global": pkgDir is <npm root -g>/@agegr/pi-web; "npx": an npx cache; else "other".
+// "global": pkgDir is <npm root -g>/@eezd/pi-web; "npx": an npx cache; else "other".
 function getInstallKind({ pkgDir, npmRoot, realpath = fs.realpathSync }) {
   const realPkgDir = realpathOrSelf(pkgDir, realpath);
   if (realPkgDir.split(/[\\/]/).includes("_npx")) return "npx";
   if (!npmRoot) return "other";
   const inGlobalRoot =
     path.basename(realPkgDir) === "pi-web" &&
-    path.basename(path.dirname(realPkgDir)) === "@agegr" &&
+    path.basename(path.dirname(realPkgDir)) === "@eezd" &&
     realpathOrSelf(path.dirname(path.dirname(realPkgDir)), realpath) === realpathOrSelf(npmRoot, realpath);
   return inGlobalRoot ? "global" : "other";
 }
@@ -87,7 +79,7 @@ function getGlobalNpmRoot() {
 }
 
 function runNpmInstall(version) {
-  const invocation = findNpmInvocation(["install", "-g", `@agegr/pi-web@${version}`]);
+  const invocation = findNpmInvocation(["install", "-g", `@eezd/pi-web@${version}`]);
   if (!invocation) return null;
   const result = spawnSync(invocation.command, invocation.args, { stdio: "inherit" });
   return result.status ?? 1;
@@ -129,7 +121,7 @@ async function runUpdate({
 
   const kind = getInstallKind({ pkgDir, npmRoot: getNpmRoot(), realpath });
   if (kind === "npx") {
-    error("This pi-web runs from the npx cache. Run `npx @agegr/pi-web@latest` instead.");
+    error("This pi-web runs from the npx cache. Run `npx @eezd/pi-web@latest` instead.");
     return 1;
   }
   if (kind !== "global") {

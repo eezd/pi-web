@@ -1,28 +1,14 @@
-const STABLE_VERSION_PATTERN = /^(\d+)\.(\d+)\.(\d+)$/;
+import { gt, valid } from "semver";
 
-function parseStableVersion(version: string): [number, number, number] | null {
-  const match = STABLE_VERSION_PATTERN.exec(version);
-  if (!match) return null;
-
-  const parts = match.slice(1).map(Number);
-  if (parts.some((part) => !Number.isSafeInteger(part))) return null;
-  return parts as [number, number, number];
+function isReleaseVersion(version: string): boolean {
+  return /^\d+\.\d+\.\d+(?:-custom\.[1-9]\d*)?$/.test(version) && valid(version) !== null;
 }
 
 export function isNewerStableVersion(candidate: string, current: string): boolean {
-  const candidateParts = parseStableVersion(candidate);
-  const currentParts = parseStableVersion(current);
-  if (!candidateParts || !currentParts) return false;
-
-  for (let index = 0; index < candidateParts.length; index += 1) {
-    if (candidateParts[index] !== currentParts[index]) {
-      return candidateParts[index] > currentParts[index];
-    }
-  }
-  return false;
+  return isReleaseVersion(candidate) && isReleaseVersion(current) && gt(candidate, current);
 }
 
 export function getPiWebReleaseUrl(version: string): string | null {
-  if (!parseStableVersion(version)) return null;
-  return `https://github.com/agegr/pi-web/releases/tag/v${version}`;
+  if (!isReleaseVersion(version)) return null;
+  return `https://github.com/eezd/pi-web/releases/tag/v${version}`;
 }

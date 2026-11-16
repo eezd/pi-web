@@ -1,5 +1,7 @@
 # Pi Web
 
+本仓库基于 [agegr/pi-web](https://github.com/agegr/pi-web)，npm 包名为 `@eezd/pi-web`，版本为 `<上游版本>-custom.N`。仅发布 npm 包和 GitHub Releases，详见[发布流程](./release.md)。
+
 [English](../README.md) | [日本語](./README.ja.md) | [Русский](./README.ru.md)
 
 [pi 编程智能体](https://github.com/earendil-works/pi)的本地浏览器界面。Pi Web 与 pi 共用本机配置和会话文件，可在浏览器中查找和继续对话、运行智能体、配置模型与资源，并查看项目文件。
@@ -24,7 +26,7 @@
 Pi Web 要求 Node.js 22.19.0 或更高版本。先用 `node --version` 检查版本，然后运行：
 
 ```bash
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 服务就绪后，命令行会尝试自动打开浏览器。如果没有打开，请访问 [http://127.0.0.1:30141](http://127.0.0.1:30141)。Pi Web 默认仅监听 `127.0.0.1`。
@@ -34,7 +36,7 @@ npx @agegr/pi-web@latest
 如需全局安装 `pi-web` 命令：
 
 ```bash
-npm install -g @agegr/pi-web@latest
+npm install -g @eezd/pi-web@latest
 pi-web
 ```
 
@@ -48,7 +50,7 @@ pi-web open [--port N]  # 在浏览器中打开正在运行的服务
 pi-web update [--check] # 更新全局 npm 安装
 ```
 
-更新时先运行 `pi-web stop`，再运行 `pi-web update`（也可以再次执行同一条安装命令）。卸载时运行 `npm uninstall -g @agegr/pi-web`。
+更新时先运行 `pi-web stop`，再运行 `pi-web update`（也可以再次执行同一条安装命令）。卸载时运行 `npm uninstall -g @eezd/pi-web`。
 
 ## 配置
 
@@ -91,7 +93,7 @@ PI_WEB_PASSWORD='足够长的随机密码' pi-web --hostname 0.0.0.0
 
 ### Docker
 
-每个版本都会向 `ghcr.io/agegr/pi-web` 发布镜像。镜像用法、Compose 示例以及需要保留哪些卷，见 [Running Pi Web in Docker](./docker.md)。
+本分支仅发布 npm 包和 GitHub Releases。`ghcr.io/agegr/pi-web` 是上游项目的镜像；上游 Docker 用法见 [Running Pi Web in Docker](./docker.md)。
 
 ### HTTP 代理
 
@@ -103,7 +105,7 @@ macOS 或 Linux：
 HTTP_PROXY=http://127.0.0.1:7890 \
 HTTPS_PROXY=http://127.0.0.1:7890 \
 NO_PROXY=localhost,127.0.0.1 \
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 Windows PowerShell：
@@ -112,7 +114,7 @@ Windows PowerShell：
 $env:HTTP_PROXY = "http://127.0.0.1:7890"
 $env:HTTPS_PROXY = "http://127.0.0.1:7890"
 $env:NO_PROXY = "localhost,127.0.0.1"
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 ## 注意事项

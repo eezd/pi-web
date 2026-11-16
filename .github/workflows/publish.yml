@@ -1,93 +1,144 @@
 name: Release
 
-# Publishes a pushed v* tag: @agegr/pi-web to npm and the Docker image to GHCR.
-# npm uses Trusted Publishing (OIDC): no npm token. The package's Trusted
-# Publisher on npmjs.com names this repository and this file (publish.yml), so
-# keep its name.
-
+# One runner performs the entire release. Ordinary pushes and upstream tags do
+# not publish. Keep this filename aligned with npm's Trusted Publisher setting.
 on:
   push:
-    tags: ["v*"]
+    tags: ["v*-custom.*"]
 
 permissions:
   contents: read
 
+# A fixed group serializes every version, rather than only identical tags.
+# GitHub retains at most one pending run; push one release tag at a time.
 concurrency:
-  group: release-${{ github.ref }}
+  group: custom-release
   cancel-in-progress: false
 
 jobs:
-  check-tag:
+  release:
+    if: github.repository == 'eezd/pi-web'
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v4
-      - name: Check the tag matches package.json
-        run: |
-          version=$(node -p "require('./package.json').version")
-          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
-            echo "::error::tag $GITHUB_REF_NAME does not match package.json version $version"
-            exit 1
-          fi
-
-  npm:
-    needs: check-tag
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 45
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          # Trusted Publishing needs npm 11.5.1 or later; Node 24 bundles it.
           node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
+
+      - name: Validate release identity and npm access
+        id: version
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          if (!/^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)-custom\.([1-9]\d*)$/.test(pkg.version)) {
+            throw new Error('Expected X.Y.Z-custom.N, with N starting at 1');
+          }
+          if (`v${pkg.version}` !== process.env.GITHUB_REF_NAME || pkg.name !== '@eezd/pi-web') {
+            throw new Error('Release tag or npm package name does not match package.json');
+          }
+          if (lock.name !== pkg.name || lock.version !== pkg.version ||
+              lock.packages[''].name !== pkg.name || lock.packages[''].version !== pkg.version) {
+            throw new Error('package-lock.json does not match package.json');
+          }
+          const response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkg.name)}/${pkg.version}`);
+          if (response.ok) {
+            const published = await response.json();
+            if (published.gitHead !== process.env.GITHUB_SHA) {
+              throw new Error('This npm version already belongs to another commit; use the next custom.N');
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'published=true\n');
+          } else if (response.status === 404) {
+            const existing = await fetch(`https://registry.npmjs.org/${encodeURIComponent(pkg.name)}`);
+            if (!existing.ok && existing.status !== 404) throw new Error(`npm registry: HTTP ${existing.status}`);
+            if (existing.status === 404 && !process.env.NPM_TOKEN) {
+              throw new Error('First publish requires an npm granular access token in the NPM_TOKEN repository secret. Configure Trusted Publishing after the package exists.');
+            }
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, 'published=false\n');
+          } else {
+            throw new Error(`npm registry: HTTP ${response.status}`);
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${pkg.version}\n`);
+          NODE
+
       - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - run: npm publish --access public
+      - run: npm run test:e2e
+        env:
+          E2E_SERVER_MODE: start
 
-  container:
-    needs: check-tag
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
+      - name: Pack the npm package
+        id: pack
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          PUBLISHED: ${{ steps.version.outputs.published }}
+        run: |
+          if [ "$PUBLISHED" = true ]; then
+            # Retry with the exact tarball already published to npm.
+            npm pack "@eezd/pi-web@$VERSION" --json > "$RUNNER_TEMP/npm-pack.json"
+          else
+            # Publishing a tarball does not add gitHead; embed it for safe retries.
+            npm pkg set gitHead="$GITHUB_SHA"
+            npm pack --json > "$RUNNER_TEMP/npm-pack.json"
+          fi
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const [pkg] = JSON.parse(fs.readFileSync(`${process.env.RUNNER_TEMP}/npm-pack.json`, 'utf8'));
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `file=${pkg.filename}\n`);
+          NODE
 
-      - uses: docker/setup-qemu-action@v3
+      - name: Publish to npm
+        if: steps.version.outputs.published != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PACKAGE_FILE: ${{ steps.pack.outputs.file }}
+        run: npm publish "$PACKAGE_FILE" --access public --tag latest --provenance
 
-      - uses: docker/setup-buildx-action@v3
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PACKAGE_FILE: ${{ steps.pack.outputs.file }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
+          npm: \`npm install -g @eezd/pi-web@$VERSION\`
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+          ## 中文
+
+          基于上游 [agegr/pi-web v${VERSION%-custom.*}](https://github.com/agegr/pi-web/releases/tag/v${VERSION%-custom.*})。
+          自有版本：\`$VERSION\`。仅发布 npm 包与 GitHub Release。
+
+          ## English
+
+          Based on upstream [agegr/pi-web v${VERSION%-custom.*}](https://github.com/agegr/pi-web/releases/tag/v${VERSION%-custom.*}).
+          Custom version: \`$VERSION\`. Published to npm and GitHub Releases.
+          EOF
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$PACKAGE_FILE" --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$PACKAGE_FILE" \
+              --repo "$GITHUB_REPOSITORY" --verify-tag \
+              --title "$GITHUB_REF_NAME" --latest --generate-notes \
+              --notes-file "$RUNNER_TEMP/release-notes.md"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker image metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          # `latest` follows the newest release tag (the action's default for semver tags).
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-
-      - name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          name: release-failure
+          path: test-results/e2e/
+          retention-days: 7
+          if-no-files-found: ignore

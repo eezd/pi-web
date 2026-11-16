@@ -1,5 +1,7 @@
 # Pi Web
 
+[agegr/pi-web](https://github.com/agegr/pi-web) のカスタム版です。npm パッケージは `@eezd/pi-web`、バージョンは `<upstream>-custom.N` です。npm と GitHub Releases に公開します。
+
 [English](../README.md) | [简体中文](./README.zh-CN.md) | [Русский](./README.ru.md)
 
 [pi コーディングエージェント](https://github.com/earendil-works/pi) のローカルブラウザー UI です。Pi Web は pi と同じローカル設定とセッションファイルを使用し、ブラウザーから会話の検索と再開、エージェントの実行、モデルやリソースの設定、プロジェクトファイルの確認を行えます。
@@ -22,7 +24,7 @@
 Pi Web には Node.js 22.19.0 以降が必要です。`node --version` でバージョンを確認してから、次を実行します：
 
 ```bash
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 サーバーの準備が整うと、CLI はブラウザーを自動的に開こうとします。開かない場合は [http://127.0.0.1:30141](http://127.0.0.1:30141) にアクセスしてください。Pi Web はデフォルトで `127.0.0.1` のみをリッスンします。
@@ -32,7 +34,7 @@ npx @agegr/pi-web@latest
 `pi-web` コマンドをグローバルにインストールする場合：
 
 ```bash
-npm install -g @agegr/pi-web@latest
+npm install -g @eezd/pi-web@latest
 pi-web
 ```
 
@@ -46,7 +48,7 @@ pi-web open [--port N]  # 実行中のサーバーをブラウザーで開く
 pi-web update [--check] # グローバル npm インストールを更新
 ```
 
-更新時は `pi-web stop` を実行してから `pi-web update` を実行します（同じインストールコマンドの再実行でも構いません）。アンインストールするには `npm uninstall -g @agegr/pi-web` を実行します。
+更新時は `pi-web stop` を実行してから `pi-web update` を実行します（同じインストールコマンドの再実行でも構いません）。アンインストールするには `npm uninstall -g @eezd/pi-web` を実行します。
 
 ## 設定
 
@@ -89,7 +91,7 @@ PI_WEB_PASSWORD='十分に長いランダムなパスワード' pi-web --hostnam
 
 ### Docker
 
-リリースごとに `ghcr.io/agegr/pi-web` へイメージを公開しています。イメージ、Compose の例、保持すべきボリュームについては [Running Pi Web in Docker](./docker.md) を参照してください。
+このフォークは npm と GitHub Releases に公開します。`ghcr.io/agegr/pi-web` は上流プロジェクトのイメージです。上流の Docker 手順は [Running Pi Web in Docker](./docker.md) を参照してください。
 
 ### HTTP プロキシ
 
@@ -101,7 +103,7 @@ macOS または Linux：
 HTTP_PROXY=http://127.0.0.1:7890 \
 HTTPS_PROXY=http://127.0.0.1:7890 \
 NO_PROXY=localhost,127.0.0.1 \
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 Windows PowerShell：
@@ -110,7 +112,7 @@ Windows PowerShell：
 $env:HTTP_PROXY = "http://127.0.0.1:7890"
 $env:HTTPS_PROXY = "http://127.0.0.1:7890"
 $env:NO_PROXY = "localhost,127.0.0.1"
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 ## 注意事項

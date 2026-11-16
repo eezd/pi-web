@@ -1,5 +1,7 @@
 # Pi Web
 
+Custom distribution of [agegr/pi-web](https://github.com/agegr/pi-web), published as `@eezd/pi-web` with versions `<upstream>-custom.N`. This fork publishes npm packages and GitHub Releases. See the [release process](./docs/release.md).
+
 [中文文档](./docs/README.zh-CN.md) | [日本語](./docs/README.ja.md) | [Русский](./docs/README.ru.md)
 
 Local browser UI for the [pi coding agent](https://github.com/earendil-works/pi). Pi Web uses the same local configuration and session files as pi, so you can browse and resume conversations, run agent turns, configure models and resources, and inspect project files from a browser.
@@ -22,7 +24,7 @@ Local browser UI for the [pi coding agent](https://github.com/earendil-works/pi)
 Pi Web requires Node.js 22.19.0 or newer. Check your version with `node --version`, then run:
 
 ```bash
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 The CLI opens a browser after the server is ready. If it does not, open [http://127.0.0.1:30141](http://127.0.0.1:30141). Pi Web listens only on `127.0.0.1` by default.
@@ -32,7 +34,7 @@ If no model provider is configured yet, open the **Models** panel to sign in or 
 To install the `pi-web` command globally:
 
 ```bash
-npm install -g @agegr/pi-web@latest
+npm install -g @eezd/pi-web@latest
 pi-web
 ```
 
@@ -46,7 +48,7 @@ pi-web open [--port N]  # open a running server in the browser
 pi-web update [--check] # update a global npm install
 ```
 
-To update, run `pi-web stop`, then `pi-web update` (or run the same install command again). To uninstall, run `npm uninstall -g @agegr/pi-web`.
+To update, run `pi-web stop`, then `pi-web update` (or run the same install command again). To uninstall, run `npm uninstall -g @eezd/pi-web`.
 
 ## Configuration
 
@@ -89,7 +91,7 @@ With many chats, terminals or file previews active at once, plain HTTP limits th
 
 ### Docker
 
-Each release publishes an image to `ghcr.io/agegr/pi-web`. See [Running Pi Web in Docker](./docs/docker.md) for it, the Compose example and which volumes to keep.
+This fork publishes npm packages and GitHub Releases. The images at `ghcr.io/agegr/pi-web` belong to the upstream project; see [docker.md](./docs/docker.md) for the upstream Docker instructions.
 
 ### HTTP Proxy
 
@@ -101,7 +103,7 @@ On macOS or Linux:
 HTTP_PROXY=http://127.0.0.1:7890 \
 HTTPS_PROXY=http://127.0.0.1:7890 \
 NO_PROXY=localhost,127.0.0.1 \
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 On Windows PowerShell:
@@ -110,7 +112,7 @@ On Windows PowerShell:
 $env:HTTP_PROXY = "http://127.0.0.1:7890"
 $env:HTTPS_PROXY = "http://127.0.0.1:7890"
 $env:NO_PROXY = "localhost,127.0.0.1"
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 ## Notes

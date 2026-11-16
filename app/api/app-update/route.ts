@@ -5,7 +5,7 @@ import { getPiWebReleaseUrl, isNewerStableVersion } from "@/lib/app-update";
 export const dynamic = "force-dynamic";
 
 const CURRENT_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "0.0.0";
-const NPM_LATEST_URL = "https://registry.npmjs.org/@agegr%2Fpi-web/latest";
+const NPM_LATEST_URL = "https://registry.npmjs.org/@eezd%2Fpi-web/latest";
 const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 5_000;
 const SKIP_VERSION_CHECK = process.env.PI_WEB_SKIP_VERSION_CHECK === "1";
@@ -30,6 +30,15 @@ async function fetchLatestVersion(): Promise<AppUpdateResponse> {
     headers: { Accept: "application/json" },
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
+  if (response.status === 404) {
+    // A new custom distribution has no npm release until its first publish.
+    return {
+      currentVersion: CURRENT_VERSION,
+      latestVersion: "",
+      updateAvailable: false,
+      releaseUrl: "",
+    };
+  }
   if (!response.ok) throw new Error(`npm registry returned HTTP ${response.status}`);
 
   const body = await response.json() as { version?: unknown };

@@ -1041,8 +1041,8 @@ a.session-tree-main {
    the versions in the accent for a few seconds. Never cut: New's label
    gives way first, and on a row too narrow for the versions they take the
    sidebar's meta size (data-fit 2, which only they reach: "Pi Web" fits
-   beside the two cells at the sidebar's 180px minimum, and at 11px so do
-   the versions with a digit to spare). */
+   beside the two cells at the sidebar's 180px minimum; full custom versions
+   at 11px may wrap to two lines for custom release suffixes). */
 .sidebar-brand {
   flex: none;
   align-self: center;
@@ -1111,6 +1111,11 @@ a.session-tree-main {
 
 .sidebar-header[data-fit="2"] .sidebar-brand {
   font-size: 11px;
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 12px;
 }
 
 .sidebar-header[data-fit="1"] .sidebar-new-label,

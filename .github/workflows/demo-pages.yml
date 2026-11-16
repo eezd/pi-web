@@ -28,6 +28,8 @@ concurrency:
 
 jobs:
   build:
+    # The custom fork publishes npm and GitHub Releases only.
+    if: github.repository == 'agegr/pi-web'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
@@ -55,7 +57,7 @@ jobs:
           path: demo/out
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.repository == 'agegr/pi-web' && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:

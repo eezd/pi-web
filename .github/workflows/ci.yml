@@ -14,6 +14,8 @@ concurrency:
 
 jobs:
   checks:
+    # Custom releases run all checks in publish.yml on a single runner.
+    if: github.repository == 'agegr/pi-web'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -28,6 +30,7 @@ jobs:
       - run: npm test
 
   e2e:
+    if: github.repository == 'agegr/pi-web'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

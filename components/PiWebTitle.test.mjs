@@ -92,13 +92,22 @@ test("the brand's text sits in the chevron column and is never cut at the sideba
   // character), and the versions in the 11px of data-fit 2.
   assert.match(brand, /(?:^|\s)font-family: var\(--font-mono\);/);
   assert.match(brand, /(?:^|\s)font-size: 15px;/);
-  assert.match(css, /\.sidebar-header\[data-fit="2"\] \.sidebar-brand \{\s*font-size: 11px;\s*\}/);
+  const compact = rule('.sidebar-header[data-fit="2"] .sidebar-brand');
+  assert.match(compact, /font-size: 11px;/);
+  assert.match(compact, /flex: 0 1 auto;/);
+  assert.match(compact, /min-width: 0;/);
+  assert.match(compact, /white-space: normal;/);
+  assert.match(compact, /overflow-wrap: anywhere;/);
   const room = SIDEBAR_MIN_WIDTH - 1 - 36 - 36;
   const box = (text, fontSize) => marginLeft + 2 * paddingLeft + text.length * 0.6 * fontSize;
   assert.ok(box(BRAND_TEXT, 15) <= room, "the brand at 15px");
   const piPackage = JSON.parse(await readFile(new URL("../node_modules/@earendil-works/pi-coding-agent/package.json", import.meta.url), "utf8"));
-  // Today's versions, with room for a longer one.
+  // Full custom versions remain visible on two lines inside the 35px row.
   const versions = brandVersionText(packageJson.version, piPackage.version);
-  assert.ok(box(versions, 11) <= room, `${versions} at 11px`);
-  assert.ok(box(`${versions}0`, 11) <= room, "and a digit more");
+  const columns = Math.floor((room - marginLeft - 2 * paddingLeft) / (0.6 * 11));
+  const lineHeight = Number(compact.match(/line-height: (\d+)px;/)[1]);
+  for (const text of [versions, `${versions}0`]) {
+    const rows = Math.ceil(text.length / columns);
+    assert.ok(rows * lineHeight + 4 <= 35, `${text} fits the toolbar height`);
+  }
 });

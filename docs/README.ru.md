@@ -1,5 +1,7 @@
 # Pi Web
 
+Собственная сборка [agegr/pi-web](https://github.com/agegr/pi-web): npm-пакет `@eezd/pi-web`, версии `<upstream>-custom.N`. Публикуется в npm и GitHub Releases.
+
 [English](../README.md) | [中文文档](./README.zh-CN.md) | [日本語](./README.ja.md)
 
 Локальный браузерный интерфейс для [pi coding agent](https://github.com/earendil-works/pi). Pi Web использует те же локальные настройки и файлы сессий, что и pi, поэтому в браузере можно находить и продолжать диалоги, запускать агента, настраивать модели и ресурсы, а также просматривать файлы проекта.
@@ -22,7 +24,7 @@
 Для работы Pi Web требуется Node.js 22.19.0 или новее. Проверьте версию командой `node --version`, затем выполните:
 
 ```bash
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 Когда сервер будет готов, CLI попытается открыть браузер автоматически. Если этого не произошло, откройте [http://127.0.0.1:30141](http://127.0.0.1:30141). По умолчанию Pi Web прослушивает только `127.0.0.1`.
@@ -32,7 +34,7 @@ npx @agegr/pi-web@latest
 Чтобы установить команду `pi-web` глобально:
 
 ```bash
-npm install -g @agegr/pi-web@latest
+npm install -g @eezd/pi-web@latest
 pi-web
 ```
 
@@ -46,7 +48,7 @@ pi-web open [--port N]  # открыть запущенный сервер в б
 pi-web update [--check] # обновить глобальную установку npm
 ```
 
-Для обновления выполните `pi-web stop`, затем `pi-web update` (или повторите ту же команду установки). Для удаления выполните `npm uninstall -g @agegr/pi-web`.
+Для обновления выполните `pi-web stop`, затем `pi-web update` (или повторите ту же команду установки). Для удаления выполните `npm uninstall -g @eezd/pi-web`.
 
 ## Настройка
 
@@ -89,7 +91,7 @@ PI_WEB_PASSWORD='длинный-случайный-пароль' pi-web --hostna
 
 ### Docker
 
-Каждый релиз публикует образ в `ghcr.io/agegr/pi-web`. Об образе, примере Compose и о том, какие тома сохранять, см. [Running Pi Web in Docker](./docker.md).
+Этот форк публикуется в npm и GitHub Releases. Образ `ghcr.io/agegr/pi-web` относится к исходному проекту; его инструкции: [Running Pi Web in Docker](./docker.md).
 
 ### HTTP-прокси
 
@@ -101,7 +103,7 @@ PI_WEB_PASSWORD='длинный-случайный-пароль' pi-web --hostna
 HTTP_PROXY=http://127.0.0.1:7890 \
 HTTPS_PROXY=http://127.0.0.1:7890 \
 NO_PROXY=localhost,127.0.0.1 \
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 В Windows PowerShell:
@@ -110,7 +112,7 @@ npx @agegr/pi-web@latest
 $env:HTTP_PROXY = "http://127.0.0.1:7890"
 $env:HTTPS_PROXY = "http://127.0.0.1:7890"
 $env:NO_PROXY = "localhost,127.0.0.1"
-npx @agegr/pi-web@latest
+npx @eezd/pi-web@latest
 ```
 
 ## Примечания

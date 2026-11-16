@@ -22,6 +22,13 @@ Typecheck: `node_modules/.bin/tsc --noEmit` · Lint: `npm run lint`
 
 The published pi-web ships no lockfile, so its dependencies resolve afresh on install, and pi up to 1.2.0 linked its own packages with `^` ranges. Install every `@earendil-works/*` package the tree holds, the SDK's own dependencies included (`pi-codemode`, `pi-mcp`, `pi-telemetry`, …), with `npm install --save-exact`, so npm reuses those exact versions for the SDK's ranges. `lib/pi-packages.test.mjs` fails on any pi package that is not pinned that way.
 
+## Custom releases
+
+- This fork publishes only `@eezd/pi-web` on npm and Releases in `eezd/pi-web`. No Docker/GHCR or Pages publishing.
+- Keep the synced upstream version and append `-custom.N`, starting at 1 for each upstream base. Use `npm run release` to increment N, or `npm run release -- X.Y.Z` after syncing that upstream release. See [docs/release.md](docs/release.md) for first-publish npm authorization.
+- `.github/workflows/publish.yml` must keep one sequential job and the fixed `custom-release` concurrency group with `cancel-in-progress: false`. Other upstream workflows must not allocate runners in this fork. Push one release tag at a time.
+- npm package identity and custom version support must stay consistent across the lockfile, CLI updater, web update check and install documentation.
+
 ---
 
 ## Architecture
