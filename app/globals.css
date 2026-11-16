@@ -462,12 +462,12 @@ html[data-theme="powerlevel10k"] .terminal-panel[data-terminal-theme="dark"] {
 }
 
 /* Windows Terminal One Half Dark. ANSI values match the official scheme;
-   secondary UI surfaces and text preserve contrast around that palette. */
+   the main area uses #23272e and panel surfaces use #292c35. */
 html[data-theme="one-half-dark"],
 [data-theme="one-half-dark"] {
   color-scheme: dark;
-  --bg: #282c34;
-  --bg-panel: #23272e;
+  --bg: #23272e;
+  --bg-panel: #292c35;
   --bg-hover: #303640;
   --bg-selected: #343a44;
   --border: #4b5260;
@@ -476,10 +476,10 @@ html[data-theme="one-half-dark"],
   --text-dim: #abb2bf;
   --accent: #61afef;
   --accent-hover: #82c1f4;
-  --accent-contrast: #282c34;
-  --user-bg: #23272e;
-  --assistant-bg: #282c34;
-  --tool-bg: #23272e;
+  --accent-contrast: #23272e;
+  --user-bg: #292c35;
+  --assistant-bg: #23272e;
+  --tool-bg: #292c35;
   --bg-subtle: rgba(255,255,255,0.04);
   --ansi-black: #282c34;
   --ansi-red: #e06c75;
@@ -500,8 +500,8 @@ html[data-theme="one-half-dark"],
 }
 
 html[data-theme="one-half-dark"] .terminal-panel[data-terminal-theme="dark"] {
-  --terminal-bg: #282c34;
-  --terminal-header-bg: #23272e;
+  --terminal-bg: #23272e;
+  --terminal-header-bg: #292c35;
   --terminal-border: #4b5260;
   --terminal-button-border: #4b5260;
   --terminal-hover-bg: #303640;
