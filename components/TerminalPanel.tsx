@@ -19,7 +19,8 @@ import {
   type TerminalModifiers,
 } from "@/lib/terminal-extra-keys";
 import type { TerminalEvent } from "@/lib/terminal-manager";
-import { TERMINAL_XTERM_THEMES } from "@/lib/terminal-theme";
+import { getTerminalXtermTheme } from "@/lib/terminal-theme";
+import { useTheme } from "@/hooks/useTheme";
 import { TerminalExtraKeys, useTerminalExtraKeysVisible } from "./TerminalExtraKeys";
 import type { TerminalTab } from "./terminal-tab-state";
 
@@ -48,8 +49,10 @@ export function TerminalPanel({ tab, active, onRestart, onClosed, onCloseError }
   const modifiersRef = useRef(modifiers);
   const showExtraKeys = useTerminalExtraKeysVisible();
   const theme = useTerminalTheme();
-  const themeRef = useRef(theme);
-  themeRef.current = theme;
+  const { theme: appTheme } = useTheme();
+  const palette = getTerminalXtermTheme(theme, appTheme);
+  const themeRef = useRef(palette);
+  themeRef.current = palette;
   const fontSize = terminalFontSize(useChatAppearance().fontSize);
   const fontSizeRef = useRef(fontSize);
   fontSizeRef.current = fontSize;
@@ -104,7 +107,7 @@ export function TerminalPanel({ tab, active, onRestart, onClosed, onCloseError }
       scrollback: 8000,
       screenReaderMode: true,
       disableStdin: true,
-      theme: TERMINAL_XTERM_THEMES[themeRef.current],
+      theme: themeRef.current,
     });
     terminalRef.current = terminal;
     const fit = new FitAddon();
@@ -148,6 +151,7 @@ export function TerminalPanel({ tab, active, onRestart, onClosed, onCloseError }
       fitAndResize();
     };
     const unsubscribeFonts = subscribeFontPreferences(updateFont);
+    document.fonts.addEventListener("loadingdone", updateFont);
 
     const connect = () => {
       if (disposed || exited || !navigator.onLine) return;
@@ -225,6 +229,7 @@ export function TerminalPanel({ tab, active, onRestart, onClosed, onCloseError }
       void writer.stop();
       resizeObserver.disconnect();
       unsubscribeFonts();
+      document.fonts.removeEventListener("loadingdone", updateFont);
       onData.dispose();
       onResize.dispose();
       window.removeEventListener("pagehide", pageHide);
@@ -238,8 +243,8 @@ export function TerminalPanel({ tab, active, onRestart, onClosed, onCloseError }
   }, [id, cwd, restored, reconnectKey, consumeModifiers]);
 
   useEffect(() => {
-    if (terminalRef.current) terminalRef.current.options.theme = TERMINAL_XTERM_THEMES[theme];
-  }, [theme]);
+    if (terminalRef.current) terminalRef.current.options.theme = palette;
+  }, [palette]);
 
   useEffect(() => {
     const terminal = terminalRef.current;

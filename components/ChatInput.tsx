@@ -1141,7 +1141,11 @@ export const ChatInput = memo(forwardRef<ChatInputHandle, Props>(function ChatIn
       resizeTextarea();
     });
     observer.observe(ta);
-    return () => observer.disconnect();
+    document.fonts.addEventListener("loadingdone", resizeTextarea);
+    return () => {
+      observer.disconnect();
+      document.fonts.removeEventListener("loadingdone", resizeTextarea);
+    };
   }, [resizeTextarea]);
 
   useEffect(() => {

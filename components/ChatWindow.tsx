@@ -1687,9 +1687,8 @@ function NoticeShelf({ notices, floating = false, onPauseChange }: { notices: No
               style={{ padding: `${NOTICE_TEXT_PADDING_Y_PX}px 0`, minWidth: 0, maxWidth: "100%", maxHeight: NOTICE_TEXT_MAX_HEIGHT_PX, overflowY: "auto", scrollbarWidth: "thin", whiteSpace: "pre-line", wordBreak: "break-word" }}
             >
               {splitNoticeText(notice.message).map((part, partIndex) => part.kind === "art" ? (
-                // A terminal QR code or bar (#755): every space kept, rows touching, and a
-                // font stack whose first font has the blocks too (the bundled Noto subset
-                // has none, so spaces and blocks would come from fonts of different widths).
+                // Terminal QR codes and bars keep every space and touching rows. The
+                // bundled Maple face includes spaces and blocks with matching advances.
                 <span
                   key={partIndex}
                   style={{
@@ -1698,7 +1697,7 @@ function NoticeShelf({ notices, floating = false, onPauseChange }: { notices: No
                     maxWidth: "100%",
                     overflowX: "auto",
                     whiteSpace: "pre",
-                    fontFamily: "Menlo, Consolas, 'DejaVu Sans Mono', monospace",
+                    fontFamily: "var(--font-mono)",
                     lineHeight: 1,
                     color: "var(--text)",
                   }}

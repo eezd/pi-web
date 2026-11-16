@@ -19,6 +19,13 @@ export async function checkFontPreferences(page) {
   assert.equal(await mono.inputValue(), "");
   assert.equal(await uiWeight.inputValue(), "400");
   assert.equal(await monoWeight.inputValue(), "400");
+  for (const selector of ["body", ".markdown-code-block code"]) {
+    assert.match(await font(selector), /^"?Maple Mono Normal NL NF CN"?,/, selector);
+  }
+  assert.equal(await page.evaluate(async () => {
+    const faces = await document.fonts.load('14px "Maple Mono Normal NL NF CN"', "Pi 中文界面 ");
+    return faces.length > 0 && faces.every((face) => face.status === "loaded");
+  }), true, "The bundled font loads Latin, Chinese and Powerline glyphs");
   assert.equal(await weight(".markdown-user-message"), "400", "Regular, not Light, is the default");
   assert.equal(await weight(".markdown-code-block code"), "400");
   await uiWeight.fill("500");

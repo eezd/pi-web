@@ -8,6 +8,7 @@ import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import ReactMarkdown from "react-markdown";
 import { useTheme } from "@/hooks/useTheme";
+import { powerlevel10kSyntaxTheme } from "@/lib/powerlevel10k.mjs";
 import { usePrismLanguages } from "@/hooks/usePrismLanguages";
 import {
   DOCX_PREVIEW_MAX_BYTES,
@@ -363,12 +364,14 @@ const DiffLineCode = memo(function DiffLineCode({
   language,
   prismReady,
   isDark,
+  powerlevel10k,
   wrapLines,
 }: {
   text: string;
   language: string;
   prismReady: boolean;
   isDark: boolean;
+  powerlevel10k: boolean;
   wrapLines: boolean;
 }) {
   if (!prismReady || language === "text" || !text) {
@@ -377,7 +380,7 @@ const DiffLineCode = memo(function DiffLineCode({
   return (
     <SyntaxHighlighter
       language={language}
-      style={isDark ? fileViewerDarkTheme : vs}
+      style={powerlevel10k ? powerlevel10kSyntaxTheme : isDark ? fileViewerDarkTheme : vs}
       showLineNumbers={false}
       wrapLongLines={wrapLines}
       PreTag="span"
@@ -413,12 +416,14 @@ function DiffView({
   language = "text",
   prismReady = false,
   isDark = false,
+  powerlevel10k = false,
 }: {
   patch: string;
   wrapLines: boolean;
   language?: string;
   prismReady?: boolean;
   isDark?: boolean;
+  powerlevel10k?: boolean;
 }) {
   const { t } = useI18n();
   const diff = diffLines(patch);
@@ -566,6 +571,7 @@ function DiffView({
                       language={language}
                       prismReady={prismReady}
                       isDark={isDark}
+                      powerlevel10k={powerlevel10k}
                       wrapLines={wrapLines}
                     />
                   )
@@ -1341,7 +1347,7 @@ function TextFileViewer({
   onStateChange,
   watchEnabled = true,
 }: Props) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { t } = useI18n();
   const [data, setData] = useState<FileData | null>(null);
   const [gitDiff, setGitDiff] = useState<GitFileDiffResponse | null>(null);
@@ -1662,7 +1668,7 @@ function TextFileViewer({
       <SyntaxHighlighter
         className={wrapLines ? "file-source-view is-wrapped" : "file-source-view"}
         language={language === "text" || !prismReady ? "plaintext" : language}
-        style={isDark ? fileViewerDarkTheme : vs}
+        style={theme === "powerlevel10k" ? powerlevel10kSyntaxTheme : isDark ? fileViewerDarkTheme : vs}
         showLineNumbers
         lineNumberStyle={{
           ...FILE_PINNED_LINE_NUMBER_STYLE,
@@ -1693,7 +1699,7 @@ function TextFileViewer({
         {viewerContent}
       </SyntaxHighlighter>
     ),
-    [isDark, language, prismReady, viewerContent, wrapLines],
+    [isDark, theme, language, prismReady, viewerContent, wrapLines],
   );
   const lightweightSourceLines = useMemo(
     () => useLightweightSource ? sourceLines.map((line, lineIndex) => (
@@ -1992,6 +1998,7 @@ function TextFileViewer({
             language={language}
             prismReady={prismReady}
             isDark={isDark}
+            powerlevel10k={theme === "powerlevel10k"}
           />
         ) : isHtml && effectiveDisplayMode === "preview" && data?.truncated && !htmlFull?.text ? (
           <div style={{ padding: 24, color: "var(--text-dim)", fontSize: 12 }}>

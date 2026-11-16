@@ -407,6 +407,60 @@ html.dark {
   --ansi-bright-white: #ffffff;
 }
 
+/* Powerlevel10k Rainbow: dark terminal surfaces, blue paths, green success,
+   yellow durations. Keep ANSI output and Prism's palette in lib/powerlevel10k.mjs aligned. */
+html[data-theme="powerlevel10k"],
+[data-theme="powerlevel10k"] {
+  color-scheme: dark;
+  --bg: #121212;
+  --bg-panel: #1c1c1c;
+  --bg-hover: #262626;
+  --bg-selected: #303030;
+  --border: #444444;
+  --text: #eeeeee;
+  --text-muted: #bcbcbc;
+  --text-dim: #a8a8a8;
+  --accent: #5fafff;
+  --accent-hover: #87d7ff;
+  --accent-contrast: #121212;
+  --user-bg: #1c1c1c;
+  --assistant-bg: #121212;
+  --tool-bg: #1c1c1c;
+  --bg-subtle: rgba(255,255,255,0.04);
+  --ansi-black: #121212;
+  --ansi-red: #ff5f5f;
+  --ansi-green: #5fd700;
+  --ansi-yellow: #ffd75f;
+  --ansi-blue: #5fafff;
+  --ansi-magenta: #af87ff;
+  --ansi-cyan: #5fd7ff;
+  --ansi-white: #d0d0d0;
+  --ansi-bright-black: #a8a8a8;
+  --ansi-bright-red: #ff8787;
+  --ansi-bright-green: #87ff5f;
+  --ansi-bright-yellow: #ffff87;
+  --ansi-bright-blue: #87d7ff;
+  --ansi-bright-magenta: #d7afff;
+  --ansi-bright-cyan: #87ffff;
+  --ansi-bright-white: #ffffff;
+}
+
+html[data-theme="powerlevel10k"] .terminal-panel[data-terminal-theme="dark"] {
+  --terminal-bg: #121212;
+  --terminal-header-bg: #1c1c1c;
+  --terminal-border: #444444;
+  --terminal-button-border: #444444;
+  --terminal-hover-bg: #262626;
+  --terminal-muted: #bcbcbc;
+  --terminal-strong: #eeeeee;
+  --terminal-key: #eeeeee;
+  --terminal-accent: #5fafff;
+  --terminal-error-border: #ff5f5f;
+  --terminal-error-bg: #301c1c;
+  --terminal-error-text: #ff8787;
+  --terminal-scrollbar: 168, 168, 168;
+}
+
 .ansi-black-fg { color: var(--ansi-black); }
 .ansi-red-fg { color: var(--ansi-red); }
 .ansi-green-fg { color: var(--ansi-green); }
@@ -1191,8 +1245,8 @@ button.extension-widget-trigger:focus-visible {
 }
 
 :root {
-  --font-ui-default: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono-default: var(--font-noto-mono), 'JetBrains Mono', 'Fira Code', 'Consolas', ui-monospace, 'PingFang SC', 'Microsoft YaHei', monospace;
+  --font-ui-default: 'Maple Mono Normal NL NF CN', ui-monospace, 'PingFang SC', 'Microsoft YaHei', monospace;
+  --font-mono-default: var(--font-ui-default);
   --font-ui: var(--font-ui-default);
   --font-mono: var(--font-mono-default);
   --font-ui-weight: 400;
@@ -1427,26 +1481,12 @@ pre, code {
   white-space: pre-wrap;
 }
 
-/* The page's mono font ships Latin and Cyrillic only, so arrows, box drawing and
-   blocks fell back to glyphs 12-17px wide in a 7.8px column. These faces take
-   those characters from a system mono font, sized to the 0.6em column. */
-@font-face {
-  font-family: "Terminal Drawing";
-  src: local("Menlo Regular"), local("Menlo-Regular"), local("DejaVu Sans Mono");
-  unicode-range: U+2190-21FF, U+2500-259F;
-  size-adjust: 99.67%;
-}
-@font-face {
-  font-family: "Terminal Drawing Windows";
-  src: local("Consolas");
-  unicode-range: U+2190-21FF, U+2500-259F;
-  size-adjust: 109.09%;
-}
-
+/* Maple Mono includes single-column arrows, box drawing and block glyphs,
+   so extension output uses the same face as the rest of the app. */
 /* Monospace with kept spaces, as an extension's text is laid out for pi's TUI:
    a status box and its bars only line up in columns. */
 .markdown-custom-message {
-  font-family: "Terminal Drawing", "Terminal Drawing Windows", var(--font-mono);
+  font-family: var(--font-mono);
   font-size: calc(13px + var(--chat-font-size-offset, 0px));
   line-height: 1.32;
 }
@@ -1608,6 +1648,15 @@ pre, code {
   font-family: var(--font-mono);
   font-weight: 650;
 }
+/* A path-like Powerline segment for the code language. */
+html[data-theme="powerlevel10k"] .markdown-code-lang {
+  padding: 4px 20px 4px 10px;
+  margin-left: -10px;
+  color: #eeeeee;
+  background: #005faf;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+}
+
 .markdown-code-actions {
   display: flex;
   align-items: center;

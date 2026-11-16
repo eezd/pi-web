@@ -1,6 +1,7 @@
 // Settings shows these as swatches: System, the light row, the dark row, then a row of three:
 // the high-contrast pair and Zenburn.
 // The rows line up by hue: each light theme sits above its dark counterpart; Rose and Slate have none.
+// Powerlevel10k has its own row below the compact palettes.
 export const THEME_OPTIONS = [
   { id: "auto", label: "settings.themeSystem", scheme: null },
   { id: "light", label: "settings.themeLight", scheme: "light" },
@@ -16,6 +17,7 @@ export const THEME_OPTIONS = [
   { id: "contrast-light", label: "settings.themeContrastLight", scheme: "light" },
   { id: "contrast-dark", label: "settings.themeContrastDark", scheme: "dark" },
   { id: "zenburn", label: "settings.themeZenburn", scheme: "dark" },
+  { id: "powerlevel10k", label: "settings.themePowerlevel10k", scheme: "dark" },
 ] as const;
 
 export type ThemePreference = (typeof THEME_OPTIONS)[number]["id"];

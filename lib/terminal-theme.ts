@@ -1,4 +1,12 @@
 import type { ITheme } from "@xterm/xterm";
+import { POWERLEVEL10K_COLORS } from "./powerlevel10k.mjs";
+import type { ResolvedTheme } from "./theme";
+
+export function getTerminalXtermTheme(terminalTheme: TerminalTheme, appTheme: ResolvedTheme): ITheme {
+  return terminalTheme === "dark" && appTheme === "powerlevel10k"
+    ? POWERLEVEL10K_COLORS
+    : TERMINAL_XTERM_THEMES[terminalTheme];
+}
 
 /** The terminal's own light/dark choice, apart from the app theme. */
 export type TerminalTheme = "dark" | "light";

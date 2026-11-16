@@ -7,6 +7,7 @@ import SyntaxHighlighter from "react-syntax-highlighter/dist/esm/prism-light";
 import { vs } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { useTheme } from "@/hooks/useTheme";
+import { powerlevel10kSyntaxTheme } from "@/lib/powerlevel10k.mjs";
 import { useI18n } from "@/hooks/useI18n";
 import { usePrismLanguages } from "@/hooks/usePrismLanguages";
 import { copyText } from "@/lib/clipboard";
@@ -411,7 +412,7 @@ function StreamingCodeChunks({ code }: { code: string }) {
  * box, no tokens) until an idle slice lets it take its language.
  */
 export const CodeBlock = memo(function CodeBlock({ code, lang, headerAction, isStreaming }: CodeBlockProps) {
-  const { isDark } = useTheme();
+  const { isDark, theme } = useTheme();
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   // Loading starts with the first block, streaming or not, so a streamed
@@ -466,7 +467,7 @@ export const CodeBlock = memo(function CodeBlock({ code, lang, headerAction, isS
       ) : (
         <SyntaxHighlighter
           language={highlighted ? lang || "text" : "text"}
-          style={isDark ? codeBlockDarkTheme : vs}
+          style={theme === "powerlevel10k" ? powerlevel10kSyntaxTheme : isDark ? codeBlockDarkTheme : vs}
           showLineNumbers
           lineNumberStyle={{ color: "var(--text-dim)", fontStyle: "normal", flexShrink: 0 }}
           renderer={renderCodeLines}

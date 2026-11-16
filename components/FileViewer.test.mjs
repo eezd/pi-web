@@ -142,7 +142,7 @@ test("the line-number gutter is pinned only in views of at most SOURCE_HIGHLIGHT
       const FILE_LINE_NUMBER_STYLE = gutterStyle;
       const FILE_PINNED_LINE_NUMBER_STYLE = pinnedStyle;
       // Stand-ins for what the highlighted element only passes on.
-      const [usePrismLanguages, SyntaxHighlighter, SourceCodeRenderer, isDark, vs, fileViewerDarkTheme, FILE_CODE_STYLE] = [() => true, "pre", "span", false, {}, {}, {}];
+      const [usePrismLanguages, SyntaxHighlighter, SourceCodeRenderer, isDark, vs, fileViewerDarkTheme, FILE_CODE_STYLE, theme] = [() => true, "pre", "span", false, {}, {}, {}, "light"];
       ${calculations}
       return { lightweightSourceLines, highlightedSource };
     };

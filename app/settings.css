@@ -1742,8 +1742,14 @@
   cursor: pointer;
 }
 
-.settings-theme-option[data-system] {
+.settings-theme-option[data-system],
+.settings-theme-option[data-full] {
   grid-column: 1 / -1;
+}
+
+.settings-theme-fill[data-theme="powerlevel10k"] {
+  border-bottom: 3px solid transparent;
+  border-image: linear-gradient(90deg, #5fafff 0% 33%, #5fd700 33% 67%, #ffd75f 67%) 1;
 }
 
 .settings-theme-option[data-wide] {
@@ -1786,7 +1792,7 @@
 /* "High contrast light" outgrows a third of the row on a phone: let the wide names take two lines. */
 .settings-theme-option[data-wide] .settings-theme-name {
   font-size: 11px;
-  line-height: 1.2;
+  line-height: 1.1;
   text-align: center;
   white-space: normal;
 }
